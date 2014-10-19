@@ -4,7 +4,6 @@ I installed the Express Generator globally for all users with this command
 
     sudu npm install -g express-generator
 
-
 I wanted to install the EJS Express generator next, with a boot strap directory structure so I did this. One level up.
 
     MyMac:MEANGBS$ express -e ejs MEANGBS
