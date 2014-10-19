@@ -1,9 +1,15 @@
-var gulp      = require('gulp'),
-    sass      = require('gulp-sass'),
-    minifycss = require('gulp-minify-css'),
-    coffee    = require('gulp-coffee-script'),
-    uglify    = require('gulp-uglify');
+var gulp         = require('gulp'),
+    sass         = require('gulp-sass'),
+    minifycss    = require('gulp-minify-css'),
+    coffee       = require('gulp-coffee-script'),
+    uglify       = require('gulp-uglify'),
+    livereload   = require('gulp-livereload'),
+    lr           = require('tiny-lr'); // tiny live reload server
 
+var tiny_lr_server = lr();
+var coffee_Sources = [ './client-js/coffee/main.coffee' ];
+var js_Sources = [ './client-js/main.js' ];
+var scss_Sources = [];
 
 gulp.task('sass', function () {
     gulp.src('./scss/*.scss')
@@ -17,15 +23,19 @@ gulp.task('sass', function () {
 });
 
 gulp.task('coffee', function() {
-    gulp.src('./client-coffee/*.coffee')
+    gulp.src(coffee_Sources)
         .pipe(coffee({bare: true}).on('error', gutil.log))
-        .pipe(gulp.dest('./client-js-dist/'))
+        .pipe(gulp.dest('./client-js/'))
 });
 
 gulp.task('compress', function() {
-    gulp.src('./client-js-dist/*.js')
+    gulp.src(js_Sources)
         .pipe(uglify())
         .pipe(gulp.dest('./public/js/main.js'))
+});
+
+gulp.task('watch',function(){
+    gulp.watch(coffee_Sources,[ 'coffee', 'compress' ]);
 });
 
 gulp.task('default', function() {
