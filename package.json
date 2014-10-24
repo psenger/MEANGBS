@@ -1,5 +1,5 @@
 {
-  "name": "MEANGBS",
+  "name": "M.E.A.N.G.B.S.",
   "version": "0.0.1",
   "description": "Boiler plate working MongoDB, Express (EJS), Angular, Node, Gulp, BootStrap3, and SASS Stack",
   "main": "app.js",

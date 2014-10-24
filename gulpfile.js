@@ -25,9 +25,9 @@ gulp.task('sass', function () {
 
 gulp.task('coffee', function() {
 
-//    gulp.src(coffee_client_sources)
-//        .pipe(coffee({bare: true}).on('error', gutil.log))
-//        .pipe(gulp.dest('./client-js/'));
+    gulp.src(coffee_client_sources)
+        .pipe(coffee({bare: true}).on('error', gutil.log))
+        .pipe(gulp.dest('./client-js/'));
 
 });
 
@@ -43,8 +43,10 @@ gulp.task('watch',function(){
 //    gulp.watch(['public/*.*'],function(e){
 //        tinylr.changed(e.path);
 //    });
+
     livereload.listen();
     gulp.watch(['public/**']).on('change', livereload.changed);
+    gulp.watch(['routes/*.js']).on('change', ['coffee'] );
 });
 
 gulp.task('default', function() {

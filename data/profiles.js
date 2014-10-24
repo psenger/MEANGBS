@@ -1,7 +1,8 @@
 'use strict';
 
-var path = require('path'),
-    mongo = require('mongoDB'),
+var path   = require('path'),
+    mongo  = require('mongoDB'),
+    slr    = require('../utils/serviceListResults'),
     format = require('util').format;
 
 var db = new mongo.Db( 'MEANGBS', new mongo.Server( '192.168.33.10', 27017, { auto_reconnect: true } ), { safe: false } );
@@ -25,8 +26,11 @@ var profiles = {};
  * @param callback function ( err, doc )
  */
 profiles.findAll = function( criteria, projection, sort, skip, limit, callback ) {
-    collection.find( criteria, projection ).sort( sort ).limit( limit ).skip( skip * limit ).toArray( callback );
-
+    collection.find( criteria, projection ).sort( sort ).limit( limit ).skip( skip * limit ).toArray(
+        function( err, doc ) {
+            slr( criteria, projection, sort, skip, limit, err, doc, callback );
+        }
+    );
 };
 
 /**
@@ -36,7 +40,7 @@ profiles.findAll = function( criteria, projection, sort, skip, limit, callback )
  * @param callback function ( err, doc )
  */
 profiles.findById = function( id, callback ) {
-    collection.findOne( { _id: new mongo.ObjectID( id ) } , callback );
+    collection.findOne( { _id: new mongo.ObjectID( id ) }, callback );
 };
 
 /**
