@@ -26,11 +26,22 @@ var profiles = {};
  * @param callback function ( err, doc )
  */
 profiles.findAll = function( criteria, projection, sort, skip, limit, callback ) {
-    collection.find( criteria, projection ).sort( sort ).limit( limit ).skip( skip * limit ).toArray(
-        function( err, doc ) {
-            slr( criteria, projection, sort, skip, limit, err, doc, callback );
-        }
-    );
+    collection.count( criteria, function( err, count ) {
+        collection.find(
+            criteria,
+            {
+                limit: limit,
+                sort: sort,
+                fields: projection,
+                skip: (skip * limit)
+            }
+        ).toArray(
+            function( err2, docs ) {
+                slr( criteria, projection, sort, skip, limit, count, err2, docs, callback );
+            }
+        );
+    });
+
 };
 
 /**

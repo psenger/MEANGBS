@@ -4,35 +4,22 @@ var express  = require('express'),
 
 router.get('/:id?', function(req, res) {
 
-    /*
-    private int offset = 0;
-    private int limit = 100;
-    private long total = 0;
-    private String filter = "";
-    private ResultType resultType = ResultType.Success;
-    private Collection<ServiceListError> errors = new ArrayList<ServiceListError>();
-    private Collection<T> results = new ArrayList<T>();
-    private String[] sort = new String[]{};
-    private List<Map<String, String>> links = new ArrayList<>();
-    */
-
     var id         = req.params.id || null;
-        criteria   = req.body.criteria || { },
-        projection = req.body.projection || { },
-        sort       = req.body.sort || { },
+        criteria   = req.body.criteria || null,
+        projection = req.body.projection || null,
+        sort       = req.body.sort || null,
         skip       = req.body.skip || 0,
         limit      = req.body.limit || 10;
 
-    if ( id ==  null ) {
-        profiles.findAll( criteria, projection, sort, skip, limit, function(err, doc) {
-                // console.log(JSON.stringify( doc ) );
-                return res.send( doc );
+    if ( id == null ) {
+        profiles.findAll( criteria, projection, sort, skip, limit,
+            function( slr ) {
+                res.send( slr );
             }
         );
     } else {
-        profiles.findById( id, projection, function(err, doc) {
-                // console.log(JSON.stringify( doc ) );
-                return res.send( doc );
+        profiles.findById( id, function( doc ) {
+                res.send( doc );
             }
         );
     }

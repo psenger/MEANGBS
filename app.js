@@ -11,7 +11,7 @@ var routes       = require('./routes/index'),
 var app = express( );
 
 // globals
-app.locals.properties = require('./package.json');
+app.locals.properties = require('./properties.json');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

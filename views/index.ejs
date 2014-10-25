@@ -5,6 +5,7 @@
     <!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
     <head>
         <% include partials/template/head.ejs %>
+        <% include partials/template/jsheader.ejs %>
     </head>
     <body>
 
@@ -44,13 +45,110 @@
             </div>
 
             <hr>
+            <script>
+                var app = angular.module( 'App', [ 'ngResource', 'ngRoute', 'ngAnimate' ] );
+                app.service( 'ProfileService',[ '$resource', function ( $resource ) {
+                    return $resource('/profiles/:id/', {}, {
+                        query:  { method: 'GET',   params:  {    skip: 0,
+                                                                limit: 10
+                                                            }, isArray: false  },
+                        save:   { method: 'POST' , headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' } },
+                        update: { method: 'PUT'  , headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' } },
+                        remove: { method: 'DELETE' }
+                    });
+                }]);
+                app.controller('GridController', [ '$rootScope','$scope', 'ProfileService', function ( $rootScope, $scope, ProfileService ) {
+                    angular.extend($scope, {
+                        currentparameter : {
+                            skip: 0,
+                            limit: 10,
+                            criteria: null
+                        }
+                    });
+//                    $rootScope.$emit("loadingmask",true);
+                    $scope.servicelistresult = ProfileService.query( $scope.currentparameter );
+                }]);
+            </script>
 
-
+           <div ng-app="App" class="row" >
+               <div ng-controller="GridController" style="height: 100%" >
+                   <div class="panel panel-default">
+                       <div class="panel-heading">
+                           <h1>List All Profiles</h1>
+                       </div>
+                       <div class="panel-body">
+                           <div class="table-responsive">
+                               <table class="table table-bordered table-striped">
+                                   <thead>
+                                    <tr>
+                                        <th>
+                                           <table>
+                                               <tr>
+                                                   <td>First Name</td>
+                                                   <td>
+                                                       <span id="published-toggle" class="app-pointer glyphicon glyphicon glyphicon-sort glyphicon-sort-by-attributes" ng-click="onClickSort( $event, 'published' )"></span>
+                                                   </td>
+                                               </tr>
+                                           </table>
+                                        </th>
+                                        <th>
+                                           <table>
+                                               <tr>
+                                                   <td>Middle Name</td>
+                                                   <td>
+                                                       <span id="published-toggle" class="app-pointer glyphicon glyphicon glyphicon-sort glyphicon-sort-by-attributes" ng-click="onClickSort( $event, 'published' )"></span>
+                                                   </td>
+                                               </tr>
+                                           </table>
+                                        </th>
+                                        <th>
+                                           <table>
+                                               <tr>
+                                                   <td>Last Name</td>
+                                                   <td>
+                                                       <span id="published-toggle" class="app-pointer glyphicon glyphicon glyphicon-sort glyphicon-sort-by-attributes" ng-click="onClickSort( $event, 'published' )"></span>
+                                                   </td>
+                                               </tr>
+                                           </table>
+                                        </th>
+                                    </tr>
+                                   </thead>
+                                   <tbody>
+                                   <tr ng-repeat="item in servicelistresult.results">
+                                       <td>{{item.name.first}}</td>
+                                       <td>{{item.name.middle}}</td>
+                                       <td>{{item.name.last}}</td>
+                                   </tr>
+                                   </tbody>
+                               </table>
+                           </div>
+                       </div>
+                       <div class="panel-footer">
+                           <div class="container-fluid">
+                               <div class="row">
+                                   <div class="col-xs-4 col-xs-offset-4 col-xs-offset-0 col-sm-offset-4">
+                                       <ul class="pager">
+                                           <li>
+                                               <button ng-attr-class="{{printPageButtonCSSClass('back', servicelistresult.page,servicelistresult.limit,servicelistresult.total)}}" ng-disabled="{{servicelistresult.page == 0}}" ng-click="onClickNavigate( $event, 'back' )">&larr; Back&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
+                                           </li>
+                                           <li>
+                                               <button ng-attr-class="{{printPageButtonCSSClass('forward', servicelistresult.page,servicelistresult.limit,servicelistresult.total)}}" ng-disabled="{{servicelistresult.page == 0}}" ng-click="onClickNavigate( $event, 'forward' )">Forward &rarr;</button>
+                                           </li>
+                                       </ul>
+                                   </div>
+                                   <div class="col-xs-4">
+                                       <a style="margin: 20px;" class="btn btn-primary btn-md" role="button" ng-click="onClickNavigate( $event, 'new' )">New</a>
+                                   </div>
+                               </div>
+                           </div>
+                       </div>
+                   </div>
+               </div>
+           </div>
 
             <% include partials/template/footer.ejs %>
         </div> <!-- /container -->
 
         <% include partials/template/jsfooter.ejs %>
-
     </body>
 </html>
