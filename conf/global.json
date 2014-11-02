@@ -1,0 +1,10 @@
+{
+    "page": {
+        "head": {
+            "title": "My App {0}"
+        },
+        "nav": {
+            "brand": "MyApp"
+        }
+    }
+}

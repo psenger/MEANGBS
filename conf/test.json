@@ -1,0 +1,6 @@
+{
+    "database": {
+        "host": "test",
+        "port": 27017
+    }
+}
