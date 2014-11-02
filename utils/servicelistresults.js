@@ -1,5 +1,4 @@
 
-
 module.exports = function( criteria, projection, sort, skip, limit, size, err, doc, callback ){
 //    console.log("-------------" );
 //    console.log("criteria=" + criteria);
