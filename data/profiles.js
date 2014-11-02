@@ -38,6 +38,9 @@ profiles.findAll = function( criteria, projection, sort, skip, limit, callback )
             }
         ).toArray(
             function( err2, docs ) {
+                docs.forEach(function(entry) {
+                    entry._links = [ { "rel" : "self", "href" : "/rest/v1/profiles/" + entry._id } ];
+                });
                 slr( criteria, projection, sort, skip, limit, count, err2, docs, callback );
             }
         );
