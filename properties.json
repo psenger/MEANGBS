@@ -1,9 +1,0 @@
-{
-    "databaseHostName": "192.168.33.10",
-    "databasePortNumber": 27017,
-
-    "page" : {
-        "pageHeaderTitlePrefix": "My App",
-        "navbarBrand" : "MyApp"
-    }
-}

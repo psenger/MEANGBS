@@ -10,8 +10,8 @@ var routes       = require('./routes/index'),
 
 var app = express( );
 
-// globals
-app.locals.properties = require('./properties.json');
+// Load the conf object ( nothing more the nconf ) into the locals.
+app.locals.conf = require('./utils/conf');
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

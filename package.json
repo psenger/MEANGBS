@@ -1,11 +1,12 @@
 {
   "name": "M.E.A.N.G.B.S.",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Boiler plate working MongoDB, Express (EJS), Angular, Node, Gulp, BootStrap3, and SASS Stack",
   "main": "app.js",
   "private": true,
   "scripts": {
-    "test": "test.js",
+    "lint": "./node_modules/.bin/jshint . --reporter=./node_modules/jshint-full-path/index.js",
+    "test": "mocha test --recursive",
     "start": "nodemon ./bin/www"
   },
   "repository": {
@@ -37,7 +38,9 @@
     "ejs": "~0.8.5",
     "express": "^4.9.8",
     "mongodb": "^1.4.19",
-    "nodemon": "^1.2.1"
+    "nodemon": "^1.2.1",
+    "lodash-node": "^2.4.1",
+    "nconf": "^0.6.9"
   },
   "devDependencies": {
     "gulp": "^3.8.8",
@@ -49,6 +52,7 @@
     "tiny-lr": "^0.1.4",
     "coffee-script": "^1.8.0",
     "gulp-concat": "^2.4.1",
-    "gulp-watch": "^1.1.0"
+    "gulp-watch": "^1.1.0",
+    "jshint": "^2.5.6"
   }
 }

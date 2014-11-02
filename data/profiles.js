@@ -3,12 +3,13 @@
 var path   = require('path'),
     mongo  = require('mongoDB'),
     slr    = require('../utils/serviceListResults'),
-    format = require('util').format;
+    format = require('util').format,
+    conf   = require('../utils/conf');
 
-var db = new mongo.Db( 'MEANGBS', new mongo.Server( '192.168.33.10', 27017, { auto_reconnect: true } ), { safe: false } );
+var db = new mongo.Db( 'MEANGBS', new mongo.Server( conf.get("database:host"), conf.get("database:port"), { auto_reconnect: true } ), { safe: false } );
 
 db.open(function(err, db) {
-    if( err) console.log("Error");
+    if( err) console.log("Error while connecting to database:", conf.get("database:host"), conf.get("database:port") );
 });
 
 var collection = db.collection( "profiles" );
