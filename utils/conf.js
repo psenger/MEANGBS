@@ -32,7 +32,7 @@ nconf.add('global', { type: 'file', file: path.join(configDir, 'global.json' ) }
 if ( nconf.get('USER') ) {
     console.log("loading config for user: " + nconf.get('USER'));
     var user = nconf.get('USER').toLowerCase();
-    nconf.add(user, { type: 'file', file: path.join(configDir, '.user', user + '.json') });
+    nconf.add(user, { type: 'file', file: path.join(configDir, '_user', user + '.json') });
 }
 
 // console.info( JSON.stringify( conf ,null,"\t" ) );
