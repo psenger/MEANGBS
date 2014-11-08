@@ -1,6 +1,7 @@
-var express  = require('express'),
-    router   = express.Router(),
-    profiles = require('../data/profiles');
+var express   = require('express'),
+    router    = express.Router(),
+    decorator = require('../utils/decorator'),
+    profiles  = require('../data/profiles');
 
 router.get('/:id?', function(req, res) {
 
@@ -14,6 +15,14 @@ router.get('/:id?', function(req, res) {
     if ( id == null ) {
         profiles.findAll( criteria, projection, sort, skip, limit,
             function( slr ) {
+
+                slr.results.forEach(function(entry) {
+                    entry._links = [ { "rel" : "self", "href" : req.baseUrl + "/" + entry._id } ];
+                });
+                slr._links = [ { "rel" : "self", "href" : req.originalUrl  } ];
+
+                decorator.addSelfLinks( req.baseUrl, slr.results );
+
                 res.send( slr );
             }
         );

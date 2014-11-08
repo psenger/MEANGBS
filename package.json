@@ -6,7 +6,7 @@
   "private": true,
   "scripts": {
     "lint": "./node_modules/.bin/jshint . --reporter=./node_modules/jshint-full-path/index.js",
-    "test": "mocha test --recursive",
+    "test": "vows test/test-*.js  --spec",
     "start": "nodemon ./bin/www"
   },
   "repository": {
@@ -53,6 +53,8 @@
     "coffee-script": "^1.8.0",
     "gulp-concat": "^2.4.1",
     "gulp-watch": "^1.1.0",
-    "jshint": "^2.5.6"
+    "jshint": "^2.5.6",
+    "vows": "^0.7.0",
+    "assert": "^1.1.2"
   }
 }
