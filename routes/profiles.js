@@ -3,26 +3,25 @@ var express   = require('express'),
     decorator = require('../utils/decorator'),
     profiles  = require('../data/profiles');
 
-router.get('/:id?', function(req, res) {
+module.exports = router.get('/:id?', function(req, res) {
+
 
     var id         = req.params.id || null;
         criteria   = req.body.criteria || null,
         projection = req.body.projection || null,
         sort       = req.body.sort || null,
-        skip       = req.body.skip || 0,
-        limit      = req.body.limit || 10;
+        page       = req.query.page || 0,
+        limit      = req.query.limit || 10;
+
+    console.log( JSON.stringify( req.body, null, "\t"));
 
     if ( id == null ) {
-        profiles.findAll( criteria, projection, sort, skip, limit,
+        profiles.findAll( criteria, projection, sort, page, limit,
             function( slr ) {
-
-                slr.results.forEach(function(entry) {
-                    entry._links = [ { "rel" : "self", "href" : req.baseUrl + "/" + entry._id } ];
-                });
-                slr._links = [ { "rel" : "self", "href" : req.originalUrl  } ];
-
                 decorator.addSelfLinks( req.baseUrl, slr.results );
-
+                decorator.addPageLinks( req.baseUrl, slr );
+                // slr._links = [ { "rel" : "self", "href" : req.originalUrl  } ];
+                // console.log( JSON.stringify( slr, null, "\t" ) );
                 res.send( slr );
             }
         );
@@ -34,5 +33,3 @@ router.get('/:id?', function(req, res) {
     }
 
 });
-
-module.exports = router;

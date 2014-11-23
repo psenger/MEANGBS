@@ -26,11 +26,33 @@
 
        <div class="container">
             <script>
+                /**
+                 * Suppress natural events and return false.
+                 *  $('form#address').submit(function(event) {
+                 *   ...
+                 *   ...
+                 *   return suppress(event);
+                 *  });
+                 *  event.returnValue is deprecated. Please use the standard event.preventDefault() instead.
+                 * @param event
+                 * @returns {boolean}
+                 */
+                function suppress(event) {
+                    if (!event)
+                        return false;
+                    if (event.preventDefault)
+                        event.preventDefault();
+                    if (event.stopPropagation)
+                        event.stopPropagation();
+                    if (event.cancelBubble)
+                        event.cancelBubble = true;
+                    return false;
+                }
                 var app = angular.module( 'App', [ 'ngResource', 'ngRoute', 'ngAnimate' ] );
                 app.service( 'ProfileService',[ '$resource', function ( $resource ) {
                     return $resource('/rest/v1/profiles/:id/', {}, {
-                        query:  { method: 'GET',   params:  {    skip: 0,
-                                                                limit: 10
+                        query:  { method: 'GET',   params:  {    page: 0,
+                                                                limit: 5
                                                             }, isArray: false  },
                         save:   { method: 'POST' , headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' } },
                         update: { method: 'PUT'  , headers: { 'Content-Type': 'application/x-www-form-urlencoded; charset=utf-8' } },
@@ -40,13 +62,68 @@
                 app.controller('GridController', [ '$rootScope','$scope', 'ProfileService', function ( $rootScope, $scope, ProfileService ) {
                     angular.extend($scope, {
                         currentparameter : {
-                            skip: 0,
+                            page: 0,
                             limit: 10,
                             criteria: null
+                        },
+                        onClickNavigate: function( e, direction, arg ) {
+                            if ( direction == 'back' ) {
+                                $scope.currentparameter.page--;
+                                $scope.servicelistresult = ProfileService.query( $scope.currentparameter );
+                            } else if ( direction == 'forward' ) {
+                                $scope.currentparameter.page++;
+                                $scope.servicelistresult = ProfileService.query($scope.currentparameter);
+                            } else if ( direction == 'goto' ) {
+                                $scope.currentparameter.page=arg;
+                                $scope.servicelistresult = ProfileService.query($scope.currentparameter);
+                            }
+//                            } else if ( direction == 'new' ) {
+//                                var modalInstance = $modal.open({
+//                                    templateUrl: "partials/form.html",
+//                                    controller: "FormController",
+//                                    size: 'sm',
+//                                    resolve: {
+//                                        currentModel: function ( $q, $route, $rootScope, $location, $timeout, Service ) {
+//                                            var deferred = $q.defer();
+//                                            deferred.resolve( {
+//                                                id:null,
+//                                                active:false,
+//                                                published:null,
+//                                                expiry:null,
+//                                                title:null,
+//                                                content:null
+//                                            } );
+//                                            return deferred.promise;
+//                                        }
+//                                    }
+//                                });
+//                            } else if ( direction == 'edit' ) {
+//                                var modalInstance = $modal.open({
+//                                    templateUrl: "partials/form.html",
+//                                    controller: "FormController",
+//                                    size: 'sm',
+//                                    resolve: {
+//                                        currentModel: function ( $q, $route, $rootScope, $location, $timeout, Service ) {
+//                                            var deferred = $q.defer();
+//                                            Service.query( { id: arg } ).$promise.then(function( result ){
+//                                                if ( result == null || result.messages.length != 0 ) {
+//                                                    deferred.reject( "An Error occurred" );
+//                                                } else {
+//                                                    console.log('got it!', result.results[0]);
+//                                                    deferred.resolve( result.results[0] );
+//                                                }
+//                                            });
+//                                            return deferred.promise;
+//                                        }
+//                                    }
+//                                });
+//                             }
+                            return suppress( e );
                         }
                     });
 //                    $rootScope.$emit("loadingmask",true);
                     $scope.servicelistresult = ProfileService.query( $scope.currentparameter );
+
                 }]);
             </script>
 
@@ -94,11 +171,11 @@
                                     </tr>
                                    </thead>
                                    <tbody>
-                                   <tr ng-repeat="item in servicelistresult.results">
-                                       <td>{{item.name.first}}</td>
-                                       <td>{{item.name.middle}}</td>
-                                       <td>{{item.name.last}}</td>
-                                   </tr>
+                                       <tr ng-repeat="item in servicelistresult.results">
+                                           <td>{{item.name.first}}</td>
+                                           <td>{{item.name.middle}}</td>
+                                           <td>{{item.name.last}}</td>
+                                       </tr>
                                    </tbody>
                                </table>
                            </div>
@@ -107,6 +184,24 @@
                            <div class="container-fluid">
                                <div class="row">
                                    <div class="col-xs-4 col-xs-offset-4 col-xs-offset-0 col-sm-offset-4">
+
+
+
+                                       <nav>
+                                           <ul class="pagination" >
+                                               <li ng-disabled="{{servicelistresult.page == 0}}"
+                                                   ng-click="onClickNavigate( $event, 'back' )"><a href="#">&laquo;</a></li>
+                                           </ul>
+                                           <ul class="pagination" ng-repeat="item in servicelistresult._links">
+                                               <li ng-class="{ 'active': item.current }"><a href="#" ng-click="onClickNavigate( $event, 'goto', item.page )">{{item.page}}<!-- <span class="sr-only">(current)</span> --></a></li>
+                                           </ul>
+                                           <ul class="pagination">
+                                               <li ng-disabled="{{servicelistresult.page == 0}}"
+                                                   ng-click="onClickNavigate( $event, 'forward' )"><a href="#">&raquo;</a></li>
+                                           </ul>
+                                       </nav>
+
+                                       <!--
                                        <ul class="pager">
                                            <li>
                                                <button ng-attr-class="{{printPageButtonCSSClass('back', servicelistresult.page,servicelistresult.limit,servicelistresult.total)}}" ng-disabled="{{servicelistresult.page == 0}}" ng-click="onClickNavigate( $event, 'back' )">&larr; Back&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</button>
@@ -115,10 +210,9 @@
                                                <button ng-attr-class="{{printPageButtonCSSClass('forward', servicelistresult.page,servicelistresult.limit,servicelistresult.total)}}" ng-disabled="{{servicelistresult.page == 0}}" ng-click="onClickNavigate( $event, 'forward' )">Forward &rarr;</button>
                                            </li>
                                        </ul>
+                                       -->
                                    </div>
-                                   <div class="col-xs-4">
-                                       <a style="margin: 20px;" class="btn btn-primary btn-md" role="button" ng-click="onClickNavigate( $event, 'new' )">New</a>
-                                   </div>
+
                                </div>
                            </div>
                        </div>

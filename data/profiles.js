@@ -5,7 +5,8 @@ var path      = require('path'),
     slr       = require('../utils/serviceListResults'),
     format    = require('util').format,
     conf      = require('../utils/conf'),
-    decorator = require('../utils/decorator');
+    decorator = require('../utils/decorator'),
+    promise   = require('q');
 
 var db = new mongo.Db( 'MEANGBS', new mongo.Server( conf.get("database:host"), conf.get("database:port"), { auto_reconnect: true } ), { safe: false } );
 
@@ -23,11 +24,18 @@ var profiles = {};
  * @param criteria
  * @param projection
  * @param sort
- * @param skip
+ * @param page
  * @param limit
  * @param callback function ( err, doc )
  */
-profiles.findAll = function( criteria, projection, sort, skip, limit, callback ) {
+profiles.findAll = function( criteria, projection, sort, page, limit, callback ) {
+
+    console.log ( "criteria = " + criteria );
+    console.log ( "projection = " + projection );
+    console.log ( "sort = " + sort );
+    console.log ( "page = " + page );
+    console.log ( "limit = " + limit );
+
     collection.count( criteria, function( err, count ) {
         collection.find(
             criteria,
@@ -35,12 +43,12 @@ profiles.findAll = function( criteria, projection, sort, skip, limit, callback )
                 limit: limit,
                 sort: sort,
                 fields: projection,
-                skip: (skip * limit)
+                skip: (page * limit)
             }
         ).toArray(
             function( err2, docs ) {
-                docs = decorator.addSelfLinks( "/rest/v1/profiles/", docs); // @TODO this is the wrong place to put this
-                slr( criteria, projection, sort, skip, limit, count, err2, docs, callback );
+                console.log ( "count = " + count );
+                slr( criteria, projection, sort, page, limit, count, err2, docs, callback );
             }
         );
     });
