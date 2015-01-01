@@ -6,7 +6,7 @@ var express   = require('express'),
 module.exports = router.get('/:id?', function(req, res) {
 
 
-    var id         = req.params.id || null;
+    var id         = req.params.id || null,
         criteria   = req.body.criteria || null,
         projection = req.body.projection || null,
         sort       = req.body.sort || null,
